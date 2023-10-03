@@ -1,7 +1,6 @@
 package com.kursx.parser.fb2;
 
 import com.kursx.parser.fb2.parts.Annotation;
-import com.kursx.parser.fb2.parts.Binary;
 import com.kursx.parser.fb2.parts.Body;
 import com.kursx.parser.fb2.parts.Description;
 import com.kursx.parser.fb2.parts.Element;
@@ -22,9 +21,7 @@ import javax.xml.parsers.ParserConfigurationException;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Objects;
 
 import static java.util.Optional.ofNullable;
@@ -37,7 +34,6 @@ public class FictionBook {
   protected Xmlns[] xmlns;
   protected Description description;
   protected List<Body> bodies = new ArrayList<>();
-  protected Map<String, Binary> binaries;
 
   public FictionBook() {
   }
@@ -58,15 +54,6 @@ public class FictionBook {
 
     for (int item = 0; item < bodyNodes.getLength(); item++) {
       bodies.add(new Body(bodyNodes.item(item)));
-    }
-
-    NodeList binary = document.getElementsByTagName("binary");
-    for (int item = 0; item < binary.getLength(); item++) {
-      if (binaries == null) {
-        binaries = new HashMap<>();
-      }
-      Binary binaryItem = new Binary(binary.item(item));
-      binaries.put(binaryItem.getId().replace("#", ""), binaryItem);
     }
   }
 
@@ -123,11 +110,6 @@ public class FictionBook {
     }
 
     return bodies.get(0);
-  }
-
-  @NotNull
-  public Map<String, Binary> getBinaries() {
-    return binaries == null ? new HashMap<>() : binaries;
   }
 
   public String getTitle() {
