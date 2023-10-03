@@ -29,9 +29,9 @@ public class Annotation extends IdElement {
     NodeList nodeList = node.getChildNodes();
     for (int i = 0; i < nodeList.getLength(); i++) {
       Node paragraph = nodeList.item(i);
-        if (elements == null) {
-            elements = new ArrayList<>();
-        }
+      if (elements == null) {
+        elements = new ArrayList<>();
+      }
       switch (paragraph.getNodeName()) {
         case "p":
           elements.add(new P(paragraph));
@@ -49,7 +49,6 @@ public class Annotation extends IdElement {
           elements.add(new EmptyLine());
           break;
         case "table":
-          elements.add(new Table());
           break;
       }
     }

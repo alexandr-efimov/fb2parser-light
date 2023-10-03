@@ -4,7 +4,9 @@ import com.kursx.parser.fb2.parts.Annotation;
 import com.kursx.parser.fb2.parts.Binary;
 import com.kursx.parser.fb2.parts.Body;
 import com.kursx.parser.fb2.parts.Description;
+import com.kursx.parser.fb2.parts.Element;
 import com.kursx.parser.fb2.parts.Person;
+import com.kursx.parser.fb2.parts.Section;
 import com.kursx.parser.fb2.parts.Xmlns;
 import com.sun.istack.internal.NotNull;
 import com.sun.istack.internal.Nullable;
@@ -12,24 +14,20 @@ import org.w3c.dom.Document;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
-import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileReader;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
+
+import static java.util.Optional.ofNullable;
 
 /**
  * Entry point to lib usage for parsing FB2 files.
@@ -41,65 +39,34 @@ public class FictionBook {
   protected List<Body> bodies = new ArrayList<>();
   protected Map<String, Binary> binaries;
 
-  public String encoding = "utf-8";
-
   public FictionBook() {
   }
 
+  /**
+   * Entry point to create Fb2 object for further work with.
+   */
   public FictionBook(File file) throws ParserConfigurationException, IOException, SAXException, OutOfMemoryError {
-    DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
-    DocumentBuilder db = dbf.newDocumentBuilder();
+    DocumentBuilder documentBuilder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
 
-    InputStream inputStream = new FileInputStream(file);
-    BufferedReader br = new BufferedReader(new FileReader(file));
+    Document document = documentBuilder.parse(file);
 
-    boolean foundIllegalCharacters = false;
-    try {
-      String line = br.readLine().trim();
-      if (!line.startsWith("<")) {
-        foundIllegalCharacters = true;
-      }
-      while (!line.endsWith("?>")) {
-        line += "\n" + br.readLine().trim();
-      }
-      int start = line.indexOf("encoding") + 8;
-      String substring = line.substring(start);
-      substring = substring.substring(substring.indexOf("\"") + 1);
-      encoding = substring.substring(0, substring.indexOf("\"")).toLowerCase();
-      br.close();
-    } catch (Exception e) {
-      e.printStackTrace();
-    }
-    Document doc;
-    if (foundIllegalCharacters) {
-      StringBuilder text = new StringBuilder();
-      br = new BufferedReader(new FileReader(file));
-      String line = br.readLine();
-      if (line != null && line.contains("<")) {
-        line = line.substring(line.indexOf("<"));
-      }
-      while (line != null) {
-        text.append(line);
-        line = br.readLine();
-      }
-      br.close();
-      doc = db.parse(new InputSource(new StringReader(text.toString())));
-    } else {
-      doc = db.parse(new InputSource(new InputStreamReader(inputStream, encoding)));
-    }
-    initXmlns(doc);
-    description = new Description(doc);
-    NodeList bodyNodes = doc.getElementsByTagName("body");
+    initXmlns(document);
+
+    description = new Description(document);
+
+    NodeList bodyNodes = document.getElementsByTagName("body");
+
     for (int item = 0; item < bodyNodes.getLength(); item++) {
       bodies.add(new Body(bodyNodes.item(item)));
     }
-    NodeList binary = doc.getElementsByTagName("binary");
+
+    NodeList binary = document.getElementsByTagName("binary");
     for (int item = 0; item < binary.getLength(); item++) {
       if (binaries == null) {
         binaries = new HashMap<>();
       }
-      Binary binary1 = new Binary(binary.item(item));
-      binaries.put(binary1.getId().replace("#", ""), binary1);
+      Binary binaryItem = new Binary(binary.item(item));
+      binaries.put(binaryItem.getId().replace("#", ""), binaryItem);
     }
   }
 
@@ -150,16 +117,17 @@ public class FictionBook {
 
   private @NotNull Body getBody(String name) {
     for (Body body : bodies) {
-      if ((name + "").equals(body.getName() + "")) {
+      if (Objects.equals(name, body.getName())) {
         return body;
       }
     }
+
     return bodies.get(0);
   }
 
   @NotNull
   public Map<String, Binary> getBinaries() {
-    return binaries == null ? new HashMap<String, Binary>() : binaries;
+    return binaries == null ? new HashMap<>() : binaries;
   }
 
   public String getTitle() {
@@ -172,6 +140,33 @@ public class FictionBook {
 
   public @Nullable Annotation getAnnotation() {
     return description.getTitleInfo().getAnnotation();
+  }
+
+  /**
+   * Get Content of the book joined with new lines.
+   * <p>
+   * Important: read all the content.
+   *
+   * @return content as string
+   */
+  @NotNull
+  public String getContentAsString() {
+    StringBuilder stringBuilder = new StringBuilder();
+
+    Body body = getBody();
+
+    for (int i = 0; i < body.getSections().size(); i++) {
+      Section section = body.getSections().get(i);
+
+      ofNullable(section.getTitleString("\n", "\n"))
+        .ifPresent(title -> stringBuilder.append("\n").append(title).append("\n"));
+
+      List<Element> sectionElements = section.getElements();
+      sectionElements.forEach(sectionElement -> stringBuilder.append(sectionElement.getText()).append("\n"));
+    }
+
+
+    return stringBuilder.toString();
   }
 }
 

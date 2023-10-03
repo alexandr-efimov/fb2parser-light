@@ -14,7 +14,6 @@ public class Body {
   protected String lang;
   protected String name;
   protected Title title;
-  protected Image image;
   protected ArrayList<Section> sections = new ArrayList<>();
   protected ArrayList<Epigraph> epigraphs;
 
@@ -46,12 +45,11 @@ public class Body {
           name = node.getTextContent();
           break;
         case "image":
-          image = new Image(node);
           break;
         case "epigraph":
-            if (epigraphs == null) {
-                epigraphs = new ArrayList<>();
-            }
+          if (epigraphs == null) {
+            epigraphs = new ArrayList<>();
+          }
           epigraphs.add(new Epigraph(node));
           break;
       }
@@ -74,11 +72,6 @@ public class Body {
   }
 
   @Nullable
-  public Image getImage() {
-    return image;
-  }
-
-  @Nullable
   public String getName() {
     return name;
   }
@@ -98,10 +91,6 @@ public class Body {
 
   public void setTitle(Title title) {
     this.title = title;
-  }
-
-  public void setImage(Image image) {
-    this.image = image;
   }
 
   public void setSections(ArrayList<Section> sections) {

@@ -8,9 +8,6 @@ import java.util.ArrayList;
 
 public class TitleInfo {
 
-  protected ArrayList<String> genre = new ArrayList<>();
-//  TODO http://www.fictionbook.org/index.php/Жанры_FictionBook_2.1
-
   protected ArrayList<String> keywords = new ArrayList<>();
   protected String bookTitle;
   protected String date;
@@ -19,7 +16,6 @@ public class TitleInfo {
   protected ArrayList<Person> authors = new ArrayList<>();
   protected ArrayList<Person> translators = new ArrayList<>();
   protected Annotation annotation;
-  protected ArrayList<Image> coverPage = new ArrayList<>();
   protected Sequence sequence;
 
   public TitleInfo() {
@@ -36,12 +32,6 @@ public class TitleInfo {
             sequence = new Sequence(node);
             break;
           case "coverpage":
-            NodeList images = node.getChildNodes();
-            for (int image = 0; image < images.getLength(); image++) {
-              if (images.item(image).getNodeName().equals("image")) {
-                coverPage.add(new Image(images.item(image)));
-              }
-            }
             break;
           case "elements":
             this.annotation = new Annotation(node);
@@ -59,7 +49,6 @@ public class TitleInfo {
             keywords.add(node.getTextContent());
             break;
           case "genre":
-            genre.add(node.getTextContent());
             break;
           case "book-title":
             bookTitle = node.getTextContent();
@@ -73,10 +62,6 @@ public class TitleInfo {
         }
       }
     }
-  }
-
-  public ArrayList<String> getGenres() {
-    return genre;
   }
 
   public String getBookTitle() {
@@ -107,16 +92,8 @@ public class TitleInfo {
     return annotation;
   }
 
-  public ArrayList<Image> getCoverPage() {
-    return coverPage;
-  }
-
   public Sequence getSequence() {
     return sequence;
-  }
-
-  public ArrayList<String> getGenre() {
-    return genre;
   }
 
   public ArrayList<String> getKeywords() {
