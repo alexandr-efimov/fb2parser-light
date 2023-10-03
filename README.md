@@ -5,7 +5,7 @@
 Using:
 
 ```java
-      System.out.println("Started FB 2 read...");
+  System.out.println("Started FB 2 read...");
 
   FictionBook fictionBook = new FictionBook(new File("/file.xml"));
 
