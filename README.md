@@ -7,14 +7,14 @@ Using:
 ```java
   System.out.println("Started FB 2 read...");
 
-  FictionBook fictionBook = new FictionBook(new File("/file.xml"));
+  FictionBookFb2 fictionBookFb2 = new FictionBookFb2(new File("/file.xml"));
 
   System.out.println("Completed FB 2 read...");
 
-  System.out.println(fictionBook.getTitle());
-  System.out.println(fictionBook.getAuthors());
+  System.out.println(fictionBookFb2.getTitle());
+  System.out.println(fictionBookFb2.getAuthors());
 
-  String bookContent = fictionBook.getContentAsString();
+  String bookContent = fictionBookFb2.getContentAsString();
 
   System.out.println("Result length: " + bookContent.length());
   System.out.println("-------------------------");
