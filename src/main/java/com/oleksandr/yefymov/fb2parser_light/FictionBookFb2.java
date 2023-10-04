@@ -18,6 +18,7 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -37,12 +38,31 @@ public class FictionBookFb2 {
   }
 
   /**
-   * Entry point to create Fb2 object for further work with.
+   * Entry point to create Fb2 object for further work with. Create from File object.
    */
-  public FictionBookFb2(File file) throws ParserConfigurationException, IOException, SAXException, OutOfMemoryError {
+  public FictionBookFb2(File file) throws ParserConfigurationException, IOException, SAXException {
     DocumentBuilder documentBuilder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
 
     Document document = documentBuilder.parse(file);
+
+    initXmlns(document);
+
+    description = new Description(document);
+
+    NodeList bodyNodes = document.getElementsByTagName("body");
+
+    for (int item = 0; item < bodyNodes.getLength(); item++) {
+      bodies.add(new Body(bodyNodes.item(item)));
+    }
+  }
+
+  /**
+   * Entry point to create Fb2 object for further work with. Create from InputStream.
+   */
+  public FictionBookFb2(InputStream is) throws ParserConfigurationException, IOException, SAXException {
+    DocumentBuilder documentBuilder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
+
+    Document document = documentBuilder.parse(is);
 
     initXmlns(document);
 
