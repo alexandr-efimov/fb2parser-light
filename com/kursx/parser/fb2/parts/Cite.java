@@ -8,7 +8,6 @@ import org.w3c.dom.NodeList;
 
 import java.util.ArrayList;
 
-//http://www.fictionbook.org/index.php/Элемент_cite
 public class Cite extends Element {
 
   protected String id;
@@ -36,33 +35,33 @@ public class Cite extends Element {
       Node paragraph = nodeList.item(i);
       switch (paragraph.getNodeName()) {
         case "text-author":
-            if (textAuthor == null) {
-                textAuthor = new ArrayList<>();
-            }
+          if (textAuthor == null) {
+            textAuthor = new ArrayList<>();
+          }
           textAuthor.add(new TextAuthor(paragraph));
           break;
         case "poem":
-            if (elements == null) {
-                elements = new ArrayList<>();
-            }
+          if (elements == null) {
+            elements = new ArrayList<>();
+          }
           elements.add(new Poem(paragraph));
           break;
         case "subtitle":
-            if (elements == null) {
-                elements = new ArrayList<>();
-            }
+          if (elements == null) {
+            elements = new ArrayList<>();
+          }
           elements.add(new Subtitle(paragraph));
           break;
         case "p":
-            if (elements == null) {
-                elements = new ArrayList<>();
-            }
+          if (elements == null) {
+            elements = new ArrayList<>();
+          }
           elements.add(new P(paragraph));
           break;
         case "empty-line":
-            if (elements == null) {
-                elements = new ArrayList<>();
-            }
+          if (elements == null) {
+            elements = new ArrayList<>();
+          }
           elements.add(new EmptyLine());
           break;
       }
@@ -91,9 +90,9 @@ public class Cite extends Element {
   @Override
   public String getText() {
     ArrayList<Element> list = new ArrayList<>(getElements());
-      if (textAuthor != null) {
-          list.addAll(textAuthor);
-      }
+    if (textAuthor != null) {
+      list.addAll(textAuthor);
+    }
     return Element.getText(list, "\n");
   }
 

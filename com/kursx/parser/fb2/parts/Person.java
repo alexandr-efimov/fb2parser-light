@@ -7,7 +7,6 @@ import org.w3c.dom.NodeList;
 
 import java.util.ArrayList;
 
-//http://www.fictionbook.org/index.php/Элемент_author
 public class Person {
 
   protected String id;
@@ -30,15 +29,15 @@ public class Person {
           id = author.getTextContent();
           break;
         case "home-page":
-            if (homePages == null) {
-                homePages = new ArrayList<>();
-            }
+          if (homePages == null) {
+            homePages = new ArrayList<>();
+          }
           homePages.add(author.getTextContent());
           break;
         case "email":
-            if (emails == null) {
-                emails = new ArrayList<>();
-            }
+          if (emails == null) {
+            emails = new ArrayList<>();
+          }
           emails.add(author.getTextContent());
           break;
         case "nickname":

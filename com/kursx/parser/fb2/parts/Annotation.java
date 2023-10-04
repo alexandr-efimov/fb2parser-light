@@ -8,7 +8,6 @@ import org.w3c.dom.NodeList;
 
 import java.util.ArrayList;
 
-//http://www.fictionbook.org/index.php/Элемент_annotation
 public class Annotation extends IdElement {
 
   protected String lang;
